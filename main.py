@@ -1,8 +1,8 @@
 import os
 import re
-import random
 import textwrap
 from datetime import datetime
+from urllib.parse import quote_plus
 
 import feedparser
 import requests
@@ -50,10 +50,25 @@ def clean_topic(text: str) -> str:
     return text
 
 
+def clean_headline(text: str) -> str:
+    text = clean_html(text)
+    text = re.sub(r"\s*[-|•]\s*[^-|•]+$", "", text).strip()
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def shorten(text: str, max_len: int) -> str:
+    text = text.strip()
+    if len(text) <= max_len:
+        return text
+    cut = text[:max_len].rsplit(" ", 1)[0].strip()
+    return cut + "..."
+
+
 def fetch_trends(limit=3):
     feed = feedparser.parse(GOOGLE_TRENDS_RSS_URL)
     if not feed.entries:
-        raise RuntimeError("No trends found in the RSS feed.")
+        raise RuntimeError("No trends found in the Google Trends RSS feed.")
 
     topics = []
     seen = set()
@@ -78,9 +93,35 @@ def fetch_trends(limit=3):
             break
 
     if len(topics) < limit:
-        raise RuntimeError("Not enough trends found in the RSS feed.")
+        raise RuntimeError("Not enough trends found in the Google Trends RSS feed.")
 
     return topics
+
+
+def fetch_news_headlines(query: str, limit=5):
+    # Free Google News RSS search
+    url = (
+        "https://news.google.com/rss/search?"
+        f"q={quote_plus(query)}+when:1d&hl=en-US&gl=US&ceid=US:en"
+    )
+
+    feed = feedparser.parse(url)
+    headlines = []
+    seen = set()
+
+    for entry in feed.entries:
+        title = clean_headline(entry.get("title", ""))
+        if not title:
+            continue
+        key = title.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        headlines.append(title)
+        if len(headlines) >= limit:
+            break
+
+    return headlines
 
 
 def make_voice(text: str, out_path: str):
@@ -224,8 +265,8 @@ def make_caption_image(lines_top, main_text, lines_bottom, out_path):
     draw = ImageDraw.Draw(img)
 
     top_font = get_font(52)
-    main_font = get_font(84)
-    bottom_font = get_font(40)
+    main_font = get_font(82)
+    bottom_font = get_font(38)
 
     y = 1110
 
@@ -241,55 +282,67 @@ def make_caption_image(lines_top, main_text, lines_bottom, out_path):
         bbox = draw.textbbox((0, 0), line, font=main_font)
         w = bbox[2] - bbox[0]
         draw.text(((WIDTH - w) / 2, y), line, font=main_font, fill="white")
-        y += 100
+        y += 96
 
     y += 18
     for line in lines_bottom:
         bbox = draw.textbbox((0, 0), line, font=bottom_font)
         w = bbox[2] - bbox[0]
         draw.text(((WIDTH - w) / 2, y), line, font=bottom_font, fill="white")
-        y += 52
+        y += 50
 
     img.save(out_path)
 
 
-def build_narration(rank: int, title: str, summary: str) -> str:
-    base_hooks = [
-        f"Why is everyone talking about {title}?",
-        f"Here is why {title} is suddenly everywhere.",
-        f"This is why {title} is blowing up right now.",
-    ]
-
-    hook = base_hooks[(rank - 1) % len(base_hooks)]
-
+def build_reason_text(title: str, summary: str, headlines: list[str]) -> str:
+    if len(headlines) >= 3:
+        return (
+            f"People are searching for {title} because news coverage is focusing on "
+            f"{headlines[0]}. It's also being pushed by {headlines[1]}. "
+            f"And a lot of the conversation is around {headlines[2]}."
+        )
+    if len(headlines) == 2:
+        return (
+            f"People are searching for {title} because headlines are focusing on "
+            f"{headlines[0]}. It's also getting attention because of {headlines[1]}."
+        )
+    if len(headlines) == 1:
+        return f"People are searching for {title} because headlines are centering on {headlines[0]}."
     if summary:
-        summary = summary[:220].strip()
-        narration = f"Number {rank}. {hook} {summary}."
-    else:
-        narration = f"Number {rank}. {hook}"
+        return f"People are searching for {title} because {shorten(summary, 220)}."
+    return f"People are searching for {title} because it is suddenly getting a lot of attention right now."
 
-    narration += " This is one of the biggest search spikes on Google right now."
-    return narration
+
+def build_narration(rank: int, title: str, summary: str, headlines: list[str]) -> str:
+    reason_text = build_reason_text(title, summary, headlines)
+    return f"Number {rank}. Why is everyone talking about {title}? {reason_text}"
+
+
+def build_bottom_lines(headlines: list[str]) -> list[str]:
+    if headlines:
+        return [shorten("why: " + headlines[0], 42)]
+    return ["why it's getting attention"]
 
 
 def make_segment(rank: int, topic: dict, idx: int):
     title = topic["title"]
     summary = topic["summary"]
+    headlines = fetch_news_headlines(title, limit=5)
 
-    narration = build_narration(rank, title, summary)
+    narration = build_narration(rank, title, summary, headlines)
 
     audio_path = os.path.join(OUTPUT_DIR, f"voice_{idx}.mp3")
     make_voice(narration, audio_path)
     audio = AudioFileClip(audio_path)
-    duration = max(audio.duration, 5.0)
+    duration = max(audio.duration, 6.0)
 
     bg = make_background_clip(title, duration, idx)
 
     caption_path = os.path.join(OUTPUT_DIR, f"caption_{idx}.png")
     make_caption_image(
-        lines_top=["WHY IS EVERYONE", "TALKING ABOUT THIS?"],
+        lines_top=["WHY IS THIS", "POPULAR RIGHT NOW?"],
         main_text=title,
-        lines_bottom=[f"#{rank} trending now"],
+        lines_bottom=build_bottom_lines(headlines),
         out_path=caption_path
     )
 
@@ -351,7 +404,6 @@ def upload_to_youtube(video_path: str, title: str, description: str, tags):
 def main():
     trends = fetch_trends(limit=3)
 
-    # Show 3 topics in countdown order
     ordered = list(reversed(trends))
 
     clips = []
@@ -374,15 +426,15 @@ def main():
     )
 
     today = datetime.utcnow().strftime("%b %d")
-    yt_title = f"Why is everyone talking about this? {today} #shorts"
+    yt_title = f"Why these 3 things are popular right now | {today} #shorts"
     yt_description = (
-        "Today's biggest trend explainer short:\n"
+        "Top 3 trend explanations right now:\n"
         f"1. {used_titles[2]}\n"
         f"2. {used_titles[1]}\n"
         f"3. {used_titles[0]}\n\n"
-        "#shorts #trending #viral #explained"
+        "#shorts #trending #explained #viral"
     )
-    yt_tags = ["shorts", "trending", "viral", "explained", "today"]
+    yt_tags = ["shorts", "trending", "explained", "viral", "today"]
 
     upload_to_youtube(out_path, yt_title, yt_description, yt_tags)
 
