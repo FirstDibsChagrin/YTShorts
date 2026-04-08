@@ -33,6 +33,170 @@ YT_REFRESH_TOKEN = os.environ["YT_REFRESH_TOKEN"]
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
+HISTORY_STORIES = [
+    {
+        "title": "He survived both atomic bombs",
+        "hook": "One man survived both atomic bombs in Japan.",
+        "body": "Tsutomu Yamaguchi was in Hiroshima when the first bomb exploded. He survived, traveled home to Nagasaki, and then survived the second bomb too.",
+        "ending": "He lived for decades after the war, making his story one of the most unbelievable survival stories in history.",
+        "search_query": "hiroshima nagasaki war memorial",
+        "category": "history",
+    },
+    {
+        "title": "The shortest war lasted under an hour",
+        "hook": "The shortest war in history lasted less than an hour.",
+        "body": "In 1896, Britain and Zanzibar went to war. After a dispute over the sultanate, British ships opened fire and destroyed the palace defenses almost immediately.",
+        "ending": "The entire war lasted about 38 minutes.",
+        "search_query": "old warship ocean battle historic city",
+        "category": "history",
+    },
+    {
+        "title": "A city was buried in a single day",
+        "hook": "An entire Roman city disappeared in a single day.",
+        "body": "When Mount Vesuvius erupted in 79 A.D., Pompeii was buried under ash and volcanic debris. Many people had no time to escape.",
+        "ending": "The buried city stayed hidden for centuries, freezing one of history's worst disasters in time.",
+        "search_query": "ancient ruins volcanic ash italy",
+        "category": "history",
+    },
+    {
+        "title": "A dancing plague took over a city",
+        "hook": "In 1518, people in one city danced until they collapsed.",
+        "body": "In Strasbourg, dozens and then hundreds of people began dancing uncontrollably in the streets. Some reportedly kept going for days.",
+        "ending": "Nobody fully agrees on what caused it, making it one of history's strangest mass events.",
+        "search_query": "old european street crowd town square",
+        "category": "history",
+    },
+    {
+        "title": "A killer fog choked an entire city",
+        "hook": "A fog once killed thousands of people in one major city.",
+        "body": "In 1952, London's Great Smog mixed cold air, smoke, and pollution into a deadly cloud. It was so thick people could barely see a few feet ahead.",
+        "ending": "Thousands died, and the disaster changed modern air pollution laws.",
+        "search_query": "foggy city street london night",
+        "category": "history",
+    },
+    {
+        "title": "A woman ruled for only 9 days",
+        "hook": "One queen ruled England for just 9 days.",
+        "body": "Lady Jane Grey was placed on the throne during a brutal power struggle. But the political plan collapsed almost immediately.",
+        "ending": "She was removed, imprisoned, and later executed, turning her into one of history's most tragic rulers.",
+        "search_query": "castle crown royal portrait hallway",
+        "category": "history",
+    },
+    {
+        "title": "The Titanic had warnings all day",
+        "hook": "The Titanic received multiple iceberg warnings before it sank.",
+        "body": "Radio operators got repeated messages about dangerous ice ahead, but not all of them were treated with enough urgency. That night, the ship struck an iceberg in the Atlantic.",
+        "ending": "More than 1,500 people died in one of history's most famous disasters.",
+        "search_query": "ocean ship night iceberg sea",
+        "category": "history",
+    },
+    {
+        "title": "A horse became a military hero",
+        "hook": "One war horse became a national hero.",
+        "body": "Sergeant Reckless carried ammunition and supplies during the Korean War, often moving through heavy fighting and dangerous terrain.",
+        "ending": "She became famous for bravery under fire, and soldiers treated her like one of their own.",
+        "search_query": "horse mountain soldier memorial",
+        "category": "history",
+    },
+    {
+        "title": "The Black Death reshaped Europe",
+        "hook": "One plague changed the entire balance of Europe.",
+        "body": "The Black Death killed enormous numbers of people in the 1300s. Towns collapsed, labor became scarce, and long-standing systems of power were shaken.",
+        "ending": "It was one of the deadliest events in human history, and its effects lasted for generations.",
+        "search_query": "medieval town dark street candle",
+        "category": "history",
+    },
+    {
+        "title": "A man was trapped underground for days",
+        "hook": "A cave rescue became one of the most terrifying survival stories ever.",
+        "body": "Explorer Floyd Collins became trapped inside a Kentucky cave in 1925. Rescue attempts were slow, dangerous, and followed closely by the public.",
+        "ending": "He died before rescuers could reach him, and the disaster shocked the country.",
+        "search_query": "cave dark rescue underground",
+        "category": "history",
+    },
+    {
+        "title": "A bridge collapse horrified America",
+        "hook": "One bridge disaster was caught in front of horrified witnesses.",
+        "body": "In 1940, the Tacoma Narrows Bridge twisted violently in the wind before collapsing. The dramatic motion was so strange it looked unreal.",
+        "ending": "The footage became one of the most famous engineering failure videos ever recorded.",
+        "search_query": "bridge wind storm water",
+        "category": "history",
+    },
+    {
+        "title": "The Hindenburg disaster happened in seconds",
+        "hook": "One of history's most famous air disasters happened in seconds.",
+        "body": "In 1937, the Hindenburg airship caught fire while attempting to land in New Jersey. News cameras and reporters captured the disaster almost live.",
+        "ending": "The fire ended the age of giant passenger airships.",
+        "search_query": "airship fire sky historic landing",
+        "category": "history",
+    },
+    {
+        "title": "The ocean sent a wall of death",
+        "hook": "A single wave destroyed entire communities in minutes.",
+        "body": "The 2004 Indian Ocean tsunami was triggered by a massive undersea earthquake. Giant waves slammed into coastlines across multiple countries.",
+        "ending": "It became one of the deadliest natural disasters in modern history.",
+        "search_query": "ocean wave disaster coastline",
+        "category": "history",
+    },
+    {
+        "title": "An expedition ended in frozen silence",
+        "hook": "A famous Arctic expedition vanished into the ice.",
+        "body": "Sir John Franklin's 1845 expedition set out to find the Northwest Passage. The ships became trapped, and the crew disappeared into one of the harshest environments on Earth.",
+        "ending": "For years, the mystery haunted the world and became one of history's darkest exploration stories.",
+        "search_query": "arctic ice ship snow",
+        "category": "history",
+    },
+    {
+        "title": "A city burned for days",
+        "hook": "One fire nearly destroyed an entire city.",
+        "body": "In 1871, the Great Chicago Fire spread rapidly through wooden buildings and dry conditions. Huge sections of the city were wiped out.",
+        "ending": "The disaster changed building practices and reshaped Chicago forever.",
+        "search_query": "city fire smoke night historic",
+        "category": "history",
+    },
+    {
+        "title": "A stampede killed hundreds at a coronation",
+        "hook": "A celebration turned into one of Russia's deadliest public disasters.",
+        "body": "During festivities for Tsar Nicholas the Second, rumors spread that gifts were running out. Massive crowds surged forward in panic.",
+        "ending": "Hundreds were crushed to death in the chaos at Khodynka Field.",
+        "search_query": "huge crowd historic field city",
+        "category": "history",
+    },
+    {
+        "title": "A prison on the sea was almost impossible to escape",
+        "hook": "One prison was designed so escape felt impossible.",
+        "body": "Alcatraz sat on an island in cold, rough water surrounded by strong currents. It held some of America's most notorious prisoners.",
+        "ending": "A few men tried to escape, and some disappearances are still debated today.",
+        "search_query": "prison island fog ocean",
+        "category": "history",
+    },
+    {
+        "title": "A volcano darkened the world",
+        "hook": "One eruption changed weather across the planet.",
+        "body": "When Mount Tambora erupted in 1815, ash and gases spread high into the atmosphere. The next year became known in places as the year without a summer.",
+        "ending": "Crop failures and famine followed, proving one volcano can change the world.",
+        "search_query": "volcano ash mountain dramatic sky",
+        "category": "history",
+    },
+    {
+        "title": "A tunnel trapped workers beneath the river",
+        "hook": "A construction disaster became a nightmare beneath the water.",
+        "body": "During the building of early tunnels under rivers, workers faced collapses, flooding, and deadly pressure changes. The danger was constant and often invisible.",
+        "ending": "These disasters helped reveal the terrifying condition later known as decompression sickness.",
+        "search_query": "tunnel underground construction water dark",
+        "category": "history",
+    },
+    {
+        "title": "A nuclear accident poisoned a region",
+        "hook": "One explosion turned a city into a warning for the world.",
+        "body": "In 1986, Reactor Four at Chernobyl exploded during a failed safety test. Fire, radiation, and confusion spread through the area before many people understood what had happened.",
+        "ending": "The disaster contaminated a huge region and remains one of history's worst nuclear accidents.",
+        "search_query": "abandoned city radiation building",
+        "category": "history",
+    },
+]
+
+
 def make_voice(text: str, out_path: str):
     tts = gTTS(text=text, lang="en")
     tts.save(out_path)
@@ -142,7 +306,7 @@ def make_background_clip(query: str, duration: float):
         clip = fit_clip_to_vertical(clip)
         return clip.set_fps(FPS)
 
-    fallback = Image.new("RGB", (WIDTH, HEIGHT), color=(20, 20, 20))
+    fallback = Image.new("RGB", (WIDTH, HEIGHT), color=(15, 15, 15))
     fallback_path = os.path.join(OUTPUT_DIR, "fallback.jpg")
     fallback.save(fallback_path)
     return ImageClip(fallback_path).set_duration(duration).set_fps(FPS)
@@ -159,49 +323,6 @@ def get_font(size: int):
     return ImageFont.load_default()
 
 
-def make_caption_image(lines_top, main_text, lines_bottom, out_path):
-    img = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-
-    overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-    overlay_draw = ImageDraw.Draw(overlay)
-    overlay_draw.rounded_rectangle(
-        [(70, 1040), (1010, 1710)],
-        radius=40,
-        fill=(0, 0, 0, 160),
-    )
-    img = Image.alpha_composite(img, overlay)
-    draw = ImageDraw.Draw(img)
-
-    top_font = get_font(50)
-    main_font = get_font(84)
-    bottom_font = get_font(36)
-
-    y = 1090
-
-    for line in lines_top:
-        bbox = draw.textbbox((0, 0), line, font=top_font)
-        w = bbox[2] - bbox[0]
-        draw.text(((WIDTH - w) / 2, y), line, font=top_font, fill="white")
-        y += 62
-
-    wrapped = textwrap.wrap(main_text, width=16)
-    y += 18
-    for line in wrapped[:4]:
-        bbox = draw.textbbox((0, 0), line, font=main_font)
-        w = bbox[2] - bbox[0]
-        draw.text(((WIDTH - w) / 2, y), line, font=main_font, fill="white")
-        y += 94
-
-    y += 18
-    for line in lines_bottom[:3]:
-        bbox = draw.textbbox((0, 0), line, font=bottom_font)
-        w = bbox[2] - bbox[0]
-        draw.text(((WIDTH - w) / 2, y), line, font=bottom_font, fill="white")
-        y += 46
-
-    img.save(out_path)
-
-
 def shorten(text: str, max_len: int) -> str:
     text = text.strip()
     if len(text) <= max_len:
@@ -210,162 +331,61 @@ def shorten(text: str, max_len: int) -> str:
     return cut + "..."
 
 
-def build_story():
-    genres = [
-        {
-            "name": "scary story",
-            "search": "dark alley night city",
-            "hook_templates": [
-                "At {time}, {name} heard knocking from inside the {place}.",
-                "{name} thought the {place} was empty until a voice said, \"Don't turn around.\"",
-                "Everyone in {town} avoided the {place}, but {name} went in anyway."
-            ],
-            "twist_templates": [
-                "When {name} checked the security camera, the hallway was empty except for one shadow standing behind them.",
-                "The message on the wall wasn't old. It had appeared while {name} was inside.",
-                "The phone started ringing, and the caller ID was {name}'s own number."
-            ],
-            "ending_templates": [
-                "{name} ran home, but the same knocking started at the bedroom door.",
-                "The next morning, the {place} was locked, but {name}'s shoes were still inside.",
-                "Now every night at {time}, someone whispers {name}'s name from the other side of the wall."
-            ],
-        },
-        {
-            "name": "mystery story",
-            "search": "fog city street rain",
-            "hook_templates": [
-                "{name} found a note in the {place} that said, \"You only have one hour.\"",
-                "A stranger left a key in {name}'s pocket and disappeared into the crowd.",
-                "{name} opened the old locker in the {place} and found a photo taken that same morning."
-            ],
-            "twist_templates": [
-                "The photo showed {name} standing next to someone who had vanished ten years earlier.",
-                "Every clue led back to an apartment with {name}'s last name on the mailbox.",
-                "Inside the envelope was a map of {town} with one building circled in red."
-            ],
-            "ending_templates": [
-                "When {name} reached the address, the door opened and the person inside looked exactly like them.",
-                "The mystery ended with one line written on the mirror: \"You were never supposed to remember.\"",
-                "{name} solved the case, but the final clue revealed they had been part of it all along."
-            ],
-        },
-        {
-            "name": "sad story",
-            "search": "lonely train station rain window",
-            "hook_templates": [
-                "Every week, {name} waited at the {place} for someone who never came back.",
-                "{name} kept receiving birthday cards from a person who had died years ago.",
-                "At sunset in {town}, {name} still set the table for two."
-            ],
-            "twist_templates": [
-                "One day a final letter arrived, explaining why the goodbye had never happened.",
-                "The old voicemail finally unlocked, and the message had been there the entire time.",
-                "A neighbor returned a box of unopened gifts addressed to {name}."
-            ],
-            "ending_templates": [
-                "{name} cried, smiled, and put the last letter in the drawer forever.",
-                "That night, for the first time in years, {name} stopped waiting by the window.",
-                "{name} never got the lost years back, but finally got the truth."
-            ],
-        },
-        {
-            "name": "drama story",
-            "search": "city rooftop sunset emotional",
-            "hook_templates": [
-                "Right before the wedding, {name} got a text that changed everything.",
-                "{name} went to the {place} to confess the truth, but someone had already told it.",
-                "The one secret {name} hid for years came out in front of the whole family."
-            ],
-            "twist_templates": [
-                "The message wasn't from an enemy. It was from the person {name} trusted most.",
-                "What looked like betrayal was actually a sacrifice nobody knew about.",
-                "The family argument stopped the moment an old recording started playing."
-            ],
-            "ending_templates": [
-                "By midnight, nothing in {name}'s life looked the same, but at least the lies were over.",
-                "{name} lost the relationship but finally stopped pretending.",
-                "The truth hurt everyone, but it also saved them."
-            ],
-        },
-        {
-            "name": "funny story",
-            "search": "cat office home chaos",
-            "hook_templates": [
-                "{name} tried to look professional until the cat joined the video call.",
-                "The worst possible thing happened to {name} five seconds before the big presentation.",
-                "{name} opened the package and realized it definitely was not the thing they ordered."
-            ],
-            "twist_templates": [
-                "The boss loved it and asked where they bought one.",
-                "The mix-up somehow made {name} internet famous by dinner.",
-                "What started as a disaster turned into the best excuse {name} had ever used."
-            ],
-            "ending_templates": [
-                "Now nobody remembers the presentation, but everyone remembers the cat.",
-                "{name} never fixed the mistake, because somehow it worked.",
-                "It was humiliating for about ten minutes, and hilarious forever after that."
-            ],
-        },
-    ]
+def make_caption_image(lines_top, main_text, lines_bottom, out_path):
+    img = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
 
-    names = [
-        "Maya", "Ethan", "Lena", "Noah", "Ava", "Jace", "Sophie", "Lucas", "Emma", "Kai"
-    ]
-    places = [
-        "subway station", "apartment hallway", "old library", "hotel room", "rooftop", "train platform",
-        "coffee shop", "school gym", "parking garage", "empty theater"
-    ]
-    towns = [
-        "Ashford", "Black Hollow", "Riverton", "Maple Glen", "Westbridge", "Pine Ridge"
-    ]
-    times = [
-        "2:13 a.m.", "midnight", "11:47 p.m.", "3:02 a.m.", "sunset", "closing time"
-    ]
-
-    genre = random.choice(genres)
-    name = random.choice(names)
-    place = random.choice(places)
-    town = random.choice(towns)
-    time = random.choice(times)
-
-    hook = random.choice(genre["hook_templates"]).format(
-        name=name, place=place, town=town, time=time
+    overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+    overlay_draw.rounded_rectangle(
+        [(60, 1010), (1020, 1730)],
+        radius=42,
+        fill=(0, 0, 0, 165),
     )
-    twist = random.choice(genre["twist_templates"]).format(
-        name=name, place=place, town=town, time=time
+    img = Image.alpha_composite(img, overlay)
+    draw = ImageDraw.Draw(img)
+
+    top_font = get_font(48)
+    main_font = get_font(82)
+    bottom_font = get_font(36)
+
+    y = 1070
+
+    for line in lines_top:
+        bbox = draw.textbbox((0, 0), line, font=top_font)
+        w = bbox[2] - bbox[0]
+        draw.text(((WIDTH - w) / 2, y), line, font=top_font, fill="white")
+        y += 60
+
+    y += 20
+    wrapped = textwrap.wrap(main_text, width=16)
+    for line in wrapped[:4]:
+        bbox = draw.textbbox((0, 0), line, font=main_font)
+        w = bbox[2] - bbox[0]
+        draw.text(((WIDTH - w) / 2, y), line, font=main_font, fill="white")
+        y += 92
+
+    y += 15
+    for line in lines_bottom[:3]:
+        wrapped_bottom = textwrap.wrap(line, width=34)
+        for subline in wrapped_bottom[:2]:
+            bbox = draw.textbbox((0, 0), subline, font=bottom_font)
+            w = bbox[2] - bbox[0]
+            draw.text(((WIDTH - w) / 2, y), subline, font=bottom_font, fill="white")
+            y += 42
+        y += 8
+
+    img.save(out_path)
+
+
+def pick_story():
+    return random.choice(HISTORY_STORIES)
+
+
+def build_narration(story):
+    return (
+        f"This actually happened in history. {story['hook']} "
+        f"{story['body']} {story['ending']}"
     )
-    ending = random.choice(genre["ending_templates"]).format(
-        name=name, place=place, town=town, time=time
-    )
-
-    full_story = f"{hook} {twist} {ending}"
-
-    title_options = [
-        f"{genre['name'].title()} you won't forget",
-        f"One-minute {genre['name']}",
-        f"This {genre['name']} has a twist",
-        f"Short {genre['name']} with a dark ending",
-    ]
-    title = random.choice(title_options)
-
-    caption_main = shorten(hook, 55)
-    bottom_lines = [
-        shorten(twist, 52),
-        shorten(ending, 52),
-    ]
-
-    return {
-        "genre_name": genre["name"],
-        "search_query": genre["search"],
-        "hook": hook,
-        "twist": twist,
-        "ending": ending,
-        "story": full_story,
-        "video_title": title,
-        "caption_main": caption_main,
-        "caption_bottom": bottom_lines,
-    }
 
 
 def upload_to_youtube(video_path: str, title: str, description: str, tags):
@@ -385,7 +405,7 @@ def upload_to_youtube(video_path: str, title: str, description: str, tags):
             "title": title[:100],
             "description": description,
             "tags": tags,
-            "categoryId": "24",
+            "categoryId": "27",
         },
         "status": {
             "privacyStatus": "public",
@@ -414,22 +434,25 @@ def upload_to_youtube(video_path: str, title: str, description: str, tags):
 
 
 def main():
-    story_data = build_story()
+    story = pick_story()
 
-    narration = story_data["story"]
+    narration = build_narration(story)
     audio_path = os.path.join(OUTPUT_DIR, "voice.mp3")
     make_voice(narration, audio_path)
 
     audio = AudioFileClip(audio_path)
     duration = max(audio.duration, 10.0)
 
-    bg = make_background_clip(story_data["search_query"], duration)
+    bg = make_background_clip(story["search_query"], duration)
 
     caption_path = os.path.join(OUTPUT_DIR, "caption.png")
     make_caption_image(
-        lines_top=["AI STORY", story_data["genre_name"].upper()],
-        main_text=story_data["caption_main"],
-        lines_bottom=story_data["caption_bottom"],
+        lines_top=["THIS ACTUALLY", "HAPPENED IN HISTORY"],
+        main_text=shorten(story["title"], 52),
+        lines_bottom=[
+            shorten(story["hook"], 72),
+            shorten(story["ending"], 72),
+        ],
         out_path=caption_path,
     )
 
@@ -450,13 +473,12 @@ def main():
     )
 
     today = datetime.utcnow().strftime("%b %d")
-    yt_title = f"{story_data['video_title']} | {today} #shorts"
+    yt_title = f"{story['title']} | {today} #shorts"
     yt_description = (
-        "Original auto-generated short story.\n\n"
-        f"{story_data['story']}\n\n"
-        "#shorts #story #aistory #fiction"
+        f"{story['hook']} {story['body']} {story['ending']}\n\n"
+        "#shorts #history #darkhistory #facts"
     )
-    yt_tags = ["shorts", "story", "fiction", "ai story", story_data["genre_name"]]
+    yt_tags = ["shorts", "history", "dark history", "facts", "true story"]
 
     upload_to_youtube(out_path, yt_title, yt_description, yt_tags)
 
