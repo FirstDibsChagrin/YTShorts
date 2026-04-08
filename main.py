@@ -2,8 +2,6 @@ import os
 import re
 import random
 import textwrap
-import tempfile
-from io import BytesIO
 from datetime import datetime
 
 import feedparser
@@ -16,7 +14,6 @@ from moviepy.editor import (
     CompositeVideoClip,
     ImageClip,
     VideoFileClip,
-    concatenate_audioclips,
     concatenate_videoclips,
 )
 
@@ -65,6 +62,7 @@ def fetch_trends(limit=3):
         title = clean_topic(entry.get("title", ""))
         if not title:
             continue
+
         key = title.lower()
         if key in seen:
             continue
@@ -186,10 +184,9 @@ def make_background_clip(query: str, duration: float, idx: int):
 
     photo_url = search_pexels_photo(query)
     if photo_url:
-        image_bytes = download_binary(photo_url)
         image_path = os.path.join(OUTPUT_DIR, f"bg_{idx}.jpg")
         with open(image_path, "wb") as f:
-            f.write(image_bytes)
+            f.write(download_binary(photo_url))
 
         clip = ImageClip(image_path).set_duration(duration)
         clip = fit_clip_to_vertical(clip)
@@ -219,66 +216,80 @@ def make_caption_image(lines_top, main_text, lines_bottom, out_path):
     overlay = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
     overlay_draw = ImageDraw.Draw(overlay)
     overlay_draw.rounded_rectangle(
-        [(70, 1080), (1010, 1680)],
+        [(70, 1060), (1010, 1700)],
         radius=40,
-        fill=(0, 0, 0, 150)
+        fill=(0, 0, 0, 155)
     )
     img = Image.alpha_composite(img, overlay)
     draw = ImageDraw.Draw(img)
 
-    top_font = get_font(54)
-    main_font = get_font(90)
-    bottom_font = get_font(42)
+    top_font = get_font(52)
+    main_font = get_font(84)
+    bottom_font = get_font(40)
 
-    y = 1125
+    y = 1110
 
     for line in lines_top:
         bbox = draw.textbbox((0, 0), line, font=top_font)
         w = bbox[2] - bbox[0]
         draw.text(((WIDTH - w) / 2, y), line, font=top_font, fill="white")
-        y += 72
+        y += 68
 
     wrapped = textwrap.wrap(main_text, width=16)
-    y += 10
-    for line in wrapped:
+    y += 12
+    for line in wrapped[:3]:
         bbox = draw.textbbox((0, 0), line, font=main_font)
         w = bbox[2] - bbox[0]
         draw.text(((WIDTH - w) / 2, y), line, font=main_font, fill="white")
-        y += 108
+        y += 100
 
-    y += 20
+    y += 18
     for line in lines_bottom:
         bbox = draw.textbbox((0, 0), line, font=bottom_font)
         w = bbox[2] - bbox[0]
         draw.text(((WIDTH - w) / 2, y), line, font=bottom_font, fill="white")
-        y += 56
+        y += 52
 
     img.save(out_path)
+
+
+def build_narration(rank: int, title: str, summary: str) -> str:
+    base_hooks = [
+        f"Why is everyone talking about {title}?",
+        f"Here is why {title} is suddenly everywhere.",
+        f"This is why {title} is blowing up right now.",
+    ]
+
+    hook = base_hooks[(rank - 1) % len(base_hooks)]
+
+    if summary:
+        summary = summary[:220].strip()
+        narration = f"Number {rank}. {hook} {summary}."
+    else:
+        narration = f"Number {rank}. {hook}"
+
+    narration += " This is one of the biggest search spikes on Google right now."
+    return narration
 
 
 def make_segment(rank: int, topic: dict, idx: int):
     title = topic["title"]
     summary = topic["summary"]
 
-    # keep narration honest and simple
-    narration = f"Number {rank}. {title}. This is one of the search topics surging on Google right now."
-    if summary:
-        short_summary = summary[:150].strip()
-        narration += f" Quick context: {short_summary}."
-    narration += " "
+    narration = build_narration(rank, title, summary)
 
     audio_path = os.path.join(OUTPUT_DIR, f"voice_{idx}.mp3")
     make_voice(narration, audio_path)
     audio = AudioFileClip(audio_path)
-    duration = max(audio.duration, 4.5)
+    duration = max(audio.duration, 5.0)
 
     bg = make_background_clip(title, duration, idx)
 
     caption_path = os.path.join(OUTPUT_DIR, f"caption_{idx}.png")
     make_caption_image(
-        lines_top=["TRENDING RIGHT NOW", f"#{rank}"],
+        lines_top=["WHY IS EVERYONE", "TALKING ABOUT THIS?"],
         main_text=title,
-        lines_bottom=["search spike on Google"],
+        lines_bottom=[f"#{rank} trending now"],
         out_path=caption_path
     )
 
@@ -340,11 +351,11 @@ def upload_to_youtube(video_path: str, title: str, description: str, tags):
 def main():
     trends = fetch_trends(limit=3)
 
+    # Show 3 topics in countdown order
+    ordered = list(reversed(trends))
+
     clips = []
     used_titles = []
-
-    # Show #3, then #2, then #1
-    ordered = list(reversed(trends))
 
     for idx, topic in enumerate(ordered, start=1):
         rank = 4 - idx
@@ -363,15 +374,15 @@ def main():
     )
 
     today = datetime.utcnow().strftime("%b %d")
-    yt_title = f"3 Google Trends exploding right now | {today} #shorts"
+    yt_title = f"Why is everyone talking about this? {today} #shorts"
     yt_description = (
-        "Top search spikes on Google right now:\n"
+        "Today's biggest trend explainer short:\n"
         f"1. {used_titles[2]}\n"
         f"2. {used_titles[1]}\n"
         f"3. {used_titles[0]}\n\n"
-        "#shorts #trending #googletrends"
+        "#shorts #trending #viral #explained"
     )
-    yt_tags = ["shorts", "trending", "google trends", "viral", "today"]
+    yt_tags = ["shorts", "trending", "viral", "explained", "today"]
 
     upload_to_youtube(out_path, yt_title, yt_description, yt_tags)
 
