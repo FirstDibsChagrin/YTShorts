@@ -3,7 +3,8 @@ name: Make and Upload Trending Short
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 15 * * *"
+    - cron: "0,20,40 8-23 * * *"
+      timezone: "America/New_York"
 
 jobs:
   build:
