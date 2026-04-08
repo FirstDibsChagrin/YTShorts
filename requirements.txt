@@ -1,9 +1,12 @@
 requests
 feedparser
 gTTS
-moviepy
+moviepy==1.0.3
 Pillow
 google-api-python-client
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
+imageio==2.34.2
+imageio-ffmpeg==0.5.1
+numpy<2
